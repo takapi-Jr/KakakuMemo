@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KakakuMemo.Views.MainPage"
+             Title="{Binding Title}">
+
+    <!-- 必要な場合は↑に追加 -->
+    <!--xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"-->
+
+    <!-- プラットフォーム別のパディング設定 -->
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness"
+                    Android="10"
+                    WinPhone="10"
+                    iOS="10, 30, 10, 10" />
+    </ContentPage.Padding>
+
+    <!-- ツールバー -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="Plus_001.png"
+                     Text="追加"/>
+        <!--Clicked="OnAdd" />-->
+        <ToolbarItem Icon="Setting_001.png"
+                     Text="設定"/>
+        <!--Clicked="OnSetting" />-->
+    </ContentPage.ToolbarItems>
+
+    <!-- メイン画面 -->
+    <ListView x:Name="listView" ItemsSource="{Binding Products}" HasUnevenRows="True">
+        <!-- ItemTemplate -->
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <StackLayout Orientation="Horizontal" Padding="5">
+                        <Image Source="Icon.png" VerticalOptions="Start" />
+                        <StackLayout Orientation="Vertical" Padding="5">
+                            <Label Text="{Binding ProductName}" />
+                            <Label Text="{Binding TypeNumber}" />
+                            <StackLayout Orientation="Vertical" Padding="10, 0, 0, 0">
+                                <Label Text="{Binding CheapestData.Price, StringFormat='最安値：￥{0:#,0}'}" />
+                                <Label Text="{Binding CheapestData.Date, StringFormat='日時：{0:d}'}" />
+                                <Label Text="{Binding CheapestData.StoreName, StringFormat='店舗：{0}'}" />
+                                <Label Text="{Binding CheapestData.OtherMemo, StringFormat='メモ：{0}'}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+
+
+    <!--<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+        <Label Text="Welcome to Xamarin Forms and Prism!" />
+    </StackLayout>-->
+
+</ContentPage>
