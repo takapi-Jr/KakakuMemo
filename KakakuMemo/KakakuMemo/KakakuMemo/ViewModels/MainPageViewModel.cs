@@ -6,6 +6,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
+using Xamarin.Forms;
 using Newtonsoft.Json;
 using KakakuMemo.Models;
 
@@ -13,6 +15,15 @@ namespace KakakuMemo.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
+        #region 定数
+
+        // 製品リストを格納するJSONファイル名
+        public static readonly string ProductsFileName = "Products.json";
+
+        #endregion
+
+
+
         #region プロパティ
 
         // 自作プロパティの命名規則メモ
@@ -29,8 +40,47 @@ namespace KakakuMemo.ViewModels
 
         // データディレクトリパス
         public string DataDirPath { get; set; }
-        // 製品リストを格納するJSONファイル名
-        public static readonly string ProductsFileName = "Products.json";
+
+        #endregion
+
+
+
+        #region コマンド
+
+        /// <summary>
+        /// SettingPageへ画面遷移するコマンド
+        /// </summary>
+        //private DelegateCommand _gotoSettingPageCommand;
+        //public DelegateCommand GotoSettingPageCommand
+        //{
+        //    get
+        //    {
+        //        if (this._gotoSettingPageCommand != null)
+        //        {
+        //            return this._gotoSettingPageCommand;
+        //        }
+
+        //        this._gotoSettingPageCommand = new DelegateCommand(() =>
+        //        {
+        //            this.NavigationService.NavigateAsync("SettingPage");
+        //        });
+        //        return this._gotoSettingPageCommand;
+        //    }
+        //}
+
+        /// <summary>
+        /// 製品リスト選択して、DetailPageへ画面遷移するコマンド
+        /// </summary>
+        public ICommand SelectedProductItemCommand => new Command<ProductData>(product => 
+        {
+            var navigationParameters = new NavigationParameters()
+            {
+                //{ "キー", 値 },
+                { DetailPageViewModel.InputKey_Product, product },
+            };
+
+            this.NavigationService.NavigateAsync("DetailPage", navigationParameters);
+        });
 
         #endregion
 
@@ -54,7 +104,7 @@ namespace KakakuMemo.ViewModels
         {
             // データディレクトリの取得
             DataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal, Environment.SpecialFolderOption.Create);
-            var FilePath = Path.Combine(DataDirPath, ProductsFileName);
+            var ProductsFilePath = Path.Combine(DataDirPath, ProductsFileName);
 
             // テスト用データ
             ProductData testData1 = new ProductData
@@ -109,10 +159,10 @@ namespace KakakuMemo.ViewModels
 
 
             //// 製品リストの取得
-            //if (!File.Exists(FilePath))
+            //if (!File.Exists(ProductsFilePath))
             //{
             //    // ファイルが存在しなければ作成
-            //    using (var writer = new StreamWriter(FilePath, true, Encoding.UTF8))
+            //    using (var writer = new StreamWriter(ProductsFilePath, true, Encoding.UTF8))
             //    {
             //        // テスト用データ
             //        ProductData testData1 = new ProductData
@@ -141,9 +191,23 @@ namespace KakakuMemo.ViewModels
             //        };
             //        testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();
 
+            //        ProductData testData3 = new ProductData
+            //        {
+            //            ProductName = "ノートパソコン",
+            //            TypeNumber = "Lenovo X1 Carbon",
+            //            Prices = new List<PriceData>()
+            //            {
+            //                new PriceData() { Price = 200000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
+            //                new PriceData() { Price = 150000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "fugafuga" },
+            //                new PriceData() { Price = 100000, Date = new DateTime(2018, 12, 31), StoreName = "ネット(Lenovoサイト)", OtherMemo = "(長文テスト)50%OFFクーポン使用。クーポンの利用は来週金曜日23時59分まで。" },
+            //            },
+            //        };
+            //        testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
+
             //        List<ProductData> testProducts = new List<ProductData>();
             //        testProducts.Add(testData1);
             //        testProducts.Add(testData2);
+            //        testProducts.Add(testData3);
 
             //        // テスト用データ書き込み
             //        var json = JsonConvert.SerializeObject(testProducts);
@@ -152,11 +216,35 @@ namespace KakakuMemo.ViewModels
             //}
 
             //// ファイル読み込み
-            //using (var reader = new StreamReader(FilePath, Encoding.UTF8))
+            //using (var reader = new StreamReader(ProductsFilePath, Encoding.UTF8))
             //{
             //    var json = reader.ReadToEnd();
             //    Products = JsonConvert.DeserializeObject<List<ProductData>>(json);
             //}
+        }
+
+        /// <summary>
+        /// OnNavigatingTo後呼び出し(このページ"から"画面遷移時に実行)
+        /// </summary>
+        public override void OnNavigatedFrom(NavigationParameters parameters)
+        {
+
+        }
+
+        /// <summary>
+        /// 画面表示後呼び出し(このページ"に"画面遷移後に実行)
+        /// </summary>
+        public override void OnNavigatedTo(NavigationParameters parameters)
+        {
+
+        }
+
+        /// <summary>
+        /// 画面表示前呼び出し(このページ"に"画面遷移時に実行)
+        /// </summary>
+        public override void OnNavigatingTo(NavigationParameters parameters)
+        {
+
         }
     }
 }

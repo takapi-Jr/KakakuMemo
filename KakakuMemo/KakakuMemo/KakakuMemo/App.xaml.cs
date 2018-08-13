@@ -32,6 +32,7 @@ namespace KakakuMemo
             // ViewとViewModelの紐づけ
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
+            containerRegistry.RegisterForNavigation<DetailPage>();
         }
     }
 }

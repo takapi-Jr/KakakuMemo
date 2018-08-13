@@ -10,7 +10,7 @@ DetailPageでは、各店舗別の価格を表示。
 |NETStandard.Library|v2.0.3|
 |Xamarin.Forms|v3.1.0.697729(最新を使用)|
 |Prism.DryIoc.Forms|v7.0.0.396(最新を使用)|
-|Xamarin.Forms.BehaviorsPack|v1.4.0(使用予定)|
+|Xamarin.Forms.BehaviorsPack|v2.0.0|
 |Newtonsoft.Json(Json.NET)|v11.0.2|
 |Xamarin.Android.Support.Design <br> Xamarin.Android.Support.v4 <br> Xamarin.Android.Support.v7.AppCompat <br> Xamarin.Android.Support.v7.CardView <br> Xamarin.Android.Support.v7.MediaRouter|v25.4.0.2(最新を使うと怒られた) <br> ※補足1：monoandroidのバージョンによって使用できるバージョンが異なる <br> ※補足2：ターゲットAndroidバージョンが7.0(APIレベル24)未満の場合は、v23.3.0を指定する必要あり|
 

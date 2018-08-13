@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             x:Class="KakakuMemo.Views.DetailPage"
+             Title="{Binding Title}">
+
+    <!-- プラットフォーム別のパディング設定 -->
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness"
+                    Android="10"
+                    WinPhone="10"
+                    iOS="10, 30, 10, 10" />
+    </ContentPage.Padding>
+
+    <!-- 詳細画面 -->
+    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+        <Label Text="Welcome to Xamarin Forms and Prism!" />
+
+        <!-- navigationParameters確認用 -->
+        <Label Text="{Binding SelectedProduct.ProductName}" />
+    </StackLayout>
+
+</ContentPage>
