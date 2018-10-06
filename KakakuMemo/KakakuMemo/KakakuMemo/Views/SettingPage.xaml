@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="KakakuMemo.Views.SettingPage"
+             Title="{Binding Title}">
+
+    <!-- プラットフォーム別のパディング設定 -->
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness"
+                    Android="0"
+                    WinPhone="0"
+                    iOS="0, 20, 0, 0" />
+    </ContentPage.Padding>
+
+    <!-- 設定/その他情報画面 -->
+    <StackLayout HorizontalOptions="Center" VerticalOptions="StartAndExpand">
+        <TableView Intent="Form" HasUnevenRows="True">
+            <TableView.Root>
+                <TableRoot>
+                    <TableSection Title="ヘルプ">
+                        <TextCell Text="使い方(未実装)"
+                                  TextColor="DimGray" />
+                        <TextCell Text="オープンソースライセンス"
+                                  TextColor="DimGray"
+                                  Command="{Binding GotoLicensePageCommand}" />
+                    </TableSection>
+                    
+                    <TableSection Title="アプリケーション情報">
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                                <Label Text="アプリケーション名" VerticalTextAlignment="Center" HorizontalOptions="Start" />
+                                <Label Text="価格メモ" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                                <Label Text="バージョン情報" VerticalTextAlignment="Center" HorizontalOptions="Start" />
+                                <Label Text="v1.0.0" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+                            </StackLayout>
+                        </ViewCell>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                                <Label Text="作成者" VerticalTextAlignment="Center" HorizontalOptions="Start" />
+                                <Label Text="taka" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+                            </StackLayout>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView.Root>
+        </TableView>
+    </StackLayout>
+        
+</ContentPage>

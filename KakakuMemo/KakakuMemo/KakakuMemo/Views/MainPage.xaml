@@ -8,9 +8,9 @@
     <!-- プラットフォーム別のパディング設定 -->
     <ContentPage.Padding>
         <OnPlatform x:TypeArguments="Thickness"
-                    Android="10"
-                    WinPhone="10"
-                    iOS="10, 30, 10, 10" />
+                    Android="0"
+                    WinPhone="0"
+                    iOS="0, 20, 0, 0" />
     </ContentPage.Padding>
 
     <!-- ツールバー -->
@@ -19,8 +19,8 @@
                      Text="追加"/>
         <!--Clicked="OnAdd" />-->
         <ToolbarItem Icon="Setting_001.png"
-                     Text="設定"/>
-        <!--Clicked="OnSetting" />-->
+                     Text="設定"
+                     Command="{Binding GotoSettingPageCommand}" />
     </ContentPage.ToolbarItems>
 
     <!-- メイン画面 -->

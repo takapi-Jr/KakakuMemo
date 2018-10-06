@@ -3,24 +3,61 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
              x:Class="KakakuMemo.Views.DetailPage"
              Title="{Binding Title}">
 
     <!-- プラットフォーム別のパディング設定 -->
     <ContentPage.Padding>
         <OnPlatform x:TypeArguments="Thickness"
-                    Android="10"
-                    WinPhone="10"
-                    iOS="10, 30, 10, 10" />
+                    Android="0"
+                    WinPhone="0"
+                    iOS="0, 20, 0, 0" />
     </ContentPage.Padding>
 
     <!-- 詳細画面 -->
-    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+    <StackLayout Orientation="Vertical" Padding="5">
+        <!-- 製品情報 -->
+        <StackLayout Orientation="Horizontal" Padding="5">
+            <Image Source="Icon.png" VerticalOptions="Start" />
+            <StackLayout Orientation="Vertical" Padding="5">
+                <Label Text="{Binding SelectedProduct.ProductName}" />
+                <Label Text="{Binding SelectedProduct.TypeNumber}" />
+            </StackLayout>
+        </StackLayout>
+        
+        <!-- 価格情報 -->
+        <ListView x:Name="listView" ItemsSource="{Binding SelectedProduct.Prices}" HasUnevenRows="True">
+            <!-- Behavior(Command) -->
+            <!--<ListView.Behaviors>
+                <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}"/>
+            </ListView.Behaviors>-->
+
+            <!-- ItemTemplate -->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" Padding="5">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="5">
+                                <Label Text="{Binding Price, StringFormat='￥{0:#,0}'}" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding Date, StringFormat='{}{0:d}'}" HorizontalTextAlignment="Center" />
+                                <Label Text="{Binding StoreName}" HorizontalTextAlignment="End" />
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal" Padding="20, 0, 0, 0">
+                                <Label Text="{Binding OtherMemo}" HorizontalTextAlignment="Start" />
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+    
+    
+    <!--<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
         <Label Text="Welcome to Xamarin Forms and Prism!" />
 
-        <!-- navigationParameters確認用 -->
+        --><!-- navigationParameters確認用 --><!--
         <Label Text="{Binding SelectedProduct.ProductName}" />
-    </StackLayout>
+    </StackLayout>-->
 
 </ContentPage>

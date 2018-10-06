@@ -50,23 +50,23 @@ namespace KakakuMemo.ViewModels
         /// <summary>
         /// SettingPageへ画面遷移するコマンド
         /// </summary>
-        //private DelegateCommand _gotoSettingPageCommand;
-        //public DelegateCommand GotoSettingPageCommand
-        //{
-        //    get
-        //    {
-        //        if (this._gotoSettingPageCommand != null)
-        //        {
-        //            return this._gotoSettingPageCommand;
-        //        }
+        private DelegateCommand _gotoSettingPageCommand;
+        public DelegateCommand GotoSettingPageCommand
+        {
+            get
+            {
+                if (this._gotoSettingPageCommand != null)
+                {
+                    return this._gotoSettingPageCommand;
+                }
 
-        //        this._gotoSettingPageCommand = new DelegateCommand(() =>
-        //        {
-        //            this.NavigationService.NavigateAsync("SettingPage");
-        //        });
-        //        return this._gotoSettingPageCommand;
-        //    }
-        //}
+                this._gotoSettingPageCommand = new DelegateCommand(() =>
+                {
+                    this.NavigationService.NavigateAsync("SettingPage");
+                });
+                return this._gotoSettingPageCommand;
+            }
+        }
 
         /// <summary>
         /// 製品リスト選択して、DetailPageへ画面遷移するコマンド
@@ -129,6 +129,26 @@ namespace KakakuMemo.ViewModels
                     new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
                     new PriceData() { Price = 30000, Date = new DateTime(2018, 4, 1), StoreName = "ネット(IIJmio)", OtherMemo = "Amazonギフト券(5000円分)付き" },
                     new PriceData() { Price = 35000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35100, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35200, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35300, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35400, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35500, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35600, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35700, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35800, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 35900, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36100, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36200, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36300, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36400, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36500, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36600, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36700, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36800, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 36900, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 37000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
                 },
             };
             testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();

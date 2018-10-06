@@ -33,6 +33,9 @@ namespace KakakuMemo
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
             containerRegistry.RegisterForNavigation<DetailPage>();
+            containerRegistry.RegisterForNavigation<AddProductPage>();
+            containerRegistry.RegisterForNavigation<SettingPage>();
+            containerRegistry.RegisterForNavigation<LicensePage>();
         }
     }
 }
