@@ -16,8 +16,8 @@
     <!-- ツールバー -->
     <ContentPage.ToolbarItems>
         <ToolbarItem Icon="Plus_001.png"
-                     Text="追加"/>
-        <!--Clicked="OnAdd" />-->
+                     Text="追加"
+                     Command="{Binding GotoAddProductPageCommand}" />
         <ToolbarItem Icon="Setting_001.png"
                      Text="設定"
                      Command="{Binding GotoSettingPageCommand}" />
@@ -27,7 +27,7 @@
     <ListView x:Name="listView" ItemsSource="{Binding Products}" HasUnevenRows="True">
         <!-- Behavior(Command) -->
         <ListView.Behaviors>
-            <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}"/>
+            <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}" />
         </ListView.Behaviors>
         
         <!-- ItemTemplate -->

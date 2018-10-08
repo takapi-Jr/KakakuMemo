@@ -29,19 +29,19 @@
                     
                     <TableSection Title="アプリケーション情報">
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="15,10,15,10">
                                 <Label Text="アプリケーション名" VerticalTextAlignment="Center" HorizontalOptions="Start" />
                                 <Label Text="価格メモ" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="15,10,15,10">
                                 <Label Text="バージョン情報" VerticalTextAlignment="Center" HorizontalOptions="Start" />
                                 <Label Text="v1.0.0" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
                             </StackLayout>
                         </ViewCell>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="10">
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="15,10,15,10">
                                 <Label Text="作成者" VerticalTextAlignment="Center" HorizontalOptions="Start" />
                                 <Label Text="taka" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
                             </StackLayout>

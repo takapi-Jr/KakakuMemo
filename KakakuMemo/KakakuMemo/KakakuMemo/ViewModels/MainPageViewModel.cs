@@ -69,6 +69,27 @@ namespace KakakuMemo.ViewModels
         }
 
         /// <summary>
+        /// AddProductPageへ画面遷移するコマンド
+        /// </summary>
+        private DelegateCommand _gotoAddProductPageCommand;
+        public DelegateCommand GotoAddProductPageCommand
+        {
+            get
+            {
+                if (this._gotoAddProductPageCommand != null)
+                {
+                    return this._gotoAddProductPageCommand;
+                }
+
+                this._gotoAddProductPageCommand = new DelegateCommand(() =>
+                {
+                    this.NavigationService.NavigateAsync("AddProductPage");
+                });
+                return this._gotoAddProductPageCommand;
+            }
+        }
+
+        /// <summary>
         /// 製品リスト選択して、DetailPageへ画面遷移するコマンド
         /// </summary>
         public ICommand SelectedProductItemCommand => new Command<ProductData>(product => 
