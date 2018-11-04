@@ -34,27 +34,21 @@
 
             <Label Grid.Row="0" Grid.Column="0" Text="製品名(*必須)" VerticalTextAlignment="Center" />
             <Entry Grid.Row="0" Grid.Column="1" Text="{Binding ProductNameEntry}" Placeholder="(例：スマホ)" />
-            <!--<Entry Grid.Row="0" Grid.Column="1" x:Name="ProductNameEntry" Placeholder="(例：スマホ)" />-->
 
             <Label Grid.Row="1" Grid.Column="0" Text="型番(*必須)" VerticalTextAlignment="Center" />
             <Entry Grid.Row="1" Grid.Column="1" Text="{Binding TypeNumberEntry}" Placeholder="(例：ASUS Zenfone4)" />
-            <!--<Entry Grid.Row="1" Grid.Column="1" x:Name="TypeNumberEntry" Placeholder="(例：ASUS Zenfone4)" />-->
 
             <Label Grid.Row="2" Grid.Column="0" Text="価格" VerticalTextAlignment="Center" />
             <Entry Grid.Row="2" Grid.Column="1" Text="{Binding PriceEntry}" Placeholder="(例：40000)" Keyboard="Numeric" />
-            <!--<Entry Grid.Row="2" Grid.Column="1" x:Name="PriceEntry" Placeholder="(例：40000)" Keyboard="Numeric" />-->
 
             <Label Grid.Row="3" Grid.Column="0" Text="日付" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="3" Grid.Column="1" Text="{Binding DateEntry}" Placeholder="(例：2018/10/01)" />
-            <!--<Entry Grid.Row="3" Grid.Column="1" x:Name="DateEntry" Placeholder="(例：2018/10/01)" />-->
+            <DatePicker Grid.Row="3" Grid.Column="1" Date="{Binding DateEntry}" Format="yyyy/MM/dd" />
 
             <Label Grid.Row="4" Grid.Column="0" Text="店舗名" VerticalTextAlignment="Center" />
             <Entry Grid.Row="4" Grid.Column="1" Text="{Binding StoreNameEntry}" Placeholder="(例：Amazon)" />
-            <!--<Entry Grid.Row="4" Grid.Column="1" x:Name="StoreNameEntry" Placeholder="(例：Amazon)" />-->
 
             <Label Grid.Row="5" Grid.Column="0" Text="その他メモ" VerticalTextAlignment="Center" />
             <Entry Grid.Row="5" Grid.Column="1" Text="{Binding OtherMemoEntry}" Placeholder="(例：ネット最安値etc...)" />
-            <!--<Entry Grid.Row="5" Grid.Column="1" x:Name="OtherMemoEntry" Placeholder="(例：ネット最安値etc...)" />-->
             <!--<Editor Grid.Row="5" Grid.Column="1" HeightRequest="60" />-->
         </Grid>
 

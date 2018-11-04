@@ -19,6 +19,8 @@ namespace KakakuMemo.ViewModels
 
         // 製品リストを格納するJSONファイル名
         public static readonly string ProductsFileName = "Products.json";
+        // パラメータ取得用キー
+        public static readonly string InputKey_AddProduct = "AddProduct";
 
         #endregion
 
@@ -71,19 +73,36 @@ namespace KakakuMemo.ViewModels
         /// <summary>
         /// AddProductPageへ画面遷移するコマンド
         /// </summary>
+        //public ICommand GotoAddProductPageCommand => new Command<List<ProductData>>(() =>
+        //{
+        //    var navigationParameters = new NavigationParameters()
+        //    {
+        //        //{ "キー", 値 },
+        //        { AddProductPageViewModel.InputKey_Products, Products },
+        //    };
+
+        //    this.NavigationService.NavigateAsync("AddProductPage", navigationParameters);
+        //});
+
         private DelegateCommand _gotoAddProductPageCommand;
         public DelegateCommand GotoAddProductPageCommand
         {
             get
             {
-                if (this._gotoAddProductPageCommand != null)
+                //if (this._gotoAddProductPageCommand != null)
+                //{
+                //    return this._gotoAddProductPageCommand;
+                //}
+
+                var navigationParameters = new NavigationParameters()
                 {
-                    return this._gotoAddProductPageCommand;
-                }
+                    //{ "キー", 値 },
+                    { AddProductPageViewModel.InputKey_Products, Products },
+                };
 
                 this._gotoAddProductPageCommand = new DelegateCommand(() =>
                 {
-                    this.NavigationService.NavigateAsync("AddProductPage");
+                    this.NavigationService.NavigateAsync("AddProductPage", navigationParameters);
                 });
                 return this._gotoAddProductPageCommand;
             }
@@ -285,7 +304,15 @@ namespace KakakuMemo.ViewModels
         /// </summary>
         public override void OnNavigatingTo(NavigationParameters parameters)
         {
-
+            // NavigationParametersに「InputKey_AddProduct」をキーとした
+            // パラメーターを持っているかどうかの確認
+            if (parameters.ContainsKey(InputKey_AddProduct))
+            {
+                // プロパティに格納
+                var tempProduct = (ProductData)parameters[InputKey_AddProduct];
+                Products.Add(tempProduct);
+                Products = Products.ToList();
+            }
         }
     }
 }
