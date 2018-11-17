@@ -90,8 +90,7 @@ namespace KakakuMemo.ViewModels
         /// </summary>
         public override void OnNavigatingTo(NavigationParameters parameters)
         {
-            // NavigationParametersに「InputKey_Product」をキーとした
-            // パラメーターを持っているかどうかの確認
+            // NavigationParametersに同じキーのパラメーターを持っているかどうかの確認
             if (parameters.ContainsKey(InputKey_Product))
             {
                 // プロパティに格納

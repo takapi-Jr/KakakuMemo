@@ -8,10 +8,12 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using KakakuMemo.Models;
 using System.Text.RegularExpressions;
+using Xamarin.Forms.BehaviorsPack;
+using System.Globalization;
 
 namespace KakakuMemo.ViewModels
 {
-	public class AddProductPageViewModel : ViewModelBase
+    public class AddProductPageViewModel : ViewModelBase
     {
         #region 定数
 
@@ -104,43 +106,20 @@ namespace KakakuMemo.ViewModels
 
         #endregion
 
-
+        
 
         #region コマンド
 
-        public ICommand AddProductCommand => new Command<ProductData>(product =>
+        public ICommand AddProductCommand => new Command(() =>
         {
             try
             {
                 //@@@@@@@@@@@@
                 // 入力項目のエラー判定
-                
 
-                // 追加予定変数に設定
-                var tempProduct = new ProductData()
-                {
-                    ProductName = ProductNameEntry,
-                    TypeNumber = TypeNumberEntry,
-                    Prices = new List<PriceData>(),
-                };
-                var tempPrice = new PriceData()
-                {
-                    Price = int.MaxValue,       // 価格が正しく取得できなければ整数の最大値
-                    Date = DateEntry,
-                    StoreName = StoreNameEntry,
-                    OtherMemo = OtherMemoEntry,
-                };
 
-                // 価格が取得できる形であれば設定
-                var temp = 0;
-                if (int.TryParse(PriceEntry, out temp))
-                {
-                    tempPrice.Price = temp;
-                }
-                tempProduct.Prices.Add(tempPrice);
-
-                // 最安値情報を作成
-                tempProduct.CheapestData = tempPrice;
+                // 製品情報を取得
+                var tempProduct = GetProductDataEntry();
 
                 // MainPageの製品リストに追加
                 // 同じ製品名、同じ型番のものがあれば追加しない
@@ -155,8 +134,40 @@ namespace KakakuMemo.ViewModels
 
                     // ルートに戻る
                     this.NavigationService.GoBackToRootAsync(navigationParameters);
-                }
 
+                    //DisplayRequest.Requested += (s, e) =>
+                    //{
+                    //    DisplayRequest.Raise(
+                    //        "製品追加",
+                    //        "製品情報を追加しました。",
+                    //        new AlertButton
+                    //        {
+                    //            Message = "OK",
+                    //            //Action = () =>
+                    //            //{
+                    //            //    // OKクリック時の処理
+                    //            //}
+                    //        });
+                    //};
+                }
+                else
+                {
+                    //// 製品名と型番が登録済み
+                    //DisplayRequest.Requested += (s, e) =>
+                    //{
+                    //    DisplayRequest.Raise(
+                    //        "製品追加エラー",
+                    //        "製品名と型番が同じ情報が既に存在します。",
+                    //        new AlertButton
+                    //        {
+                    //            Message = "OK",
+                    //            //Action = () =>
+                    //            //{
+                    //            //    // OKクリック時の処理
+                    //            //}
+                    //        });
+                    //};
+                }
             }
             catch (Exception ex)
             {
@@ -178,29 +189,7 @@ namespace KakakuMemo.ViewModels
 
         //public InteractionRequest NotifyCompletedRequest { get; } = new InteractionRequest();
 
-        
-        
-        //public NotificationRequest DisplayRequest { get; } = new NotificationRequest();
-
-        //private void Foo()
-        //{
-        //    DisplayRequest.Raise(
-        //        "登録確認",
-        //        "入力情報を登録してもよろしいですか？",
-        //        new AlertButton
-        //        {
-        //            Message = "OK",
-        //            Action = () =>
-        //            {
-        //                // OKクリック時の処理
-        //            }
-        //        },
-        //        new AlertButton
-        //        {
-        //            Message = "Cancel",
-        //        }
-        //    );
-        //}
+        //public DisplayAlertRequest DisplayRequest { get; } = new DisplayAlertRequest();
 
         #endregion
         
@@ -234,6 +223,41 @@ namespace KakakuMemo.ViewModels
         }
 
         /// <summary>
+        /// 入力エントリーの内容から製品情報を取得
+        /// </summary>
+        /// <returns>製品情報</returns>
+        private ProductData GetProductDataEntry()
+        {
+            // 追加予定変数の製品情報を取得
+            var productData = new ProductData()
+            {
+                ProductName = ProductNameEntry,
+                TypeNumber = TypeNumberEntry,
+                Prices = new List<PriceData>(),
+            };
+            var priceData = new PriceData()
+            {
+                Price = int.MaxValue,       // 価格が正しく取得できなければ整数の最大値
+                Date = DateEntry,
+                StoreName = StoreNameEntry,
+                OtherMemo = OtherMemoEntry,
+            };
+
+            // 価格が取得できる形であれば設定
+            var temp = 0;
+            if (int.TryParse(PriceEntry, out temp))
+            {
+                priceData.Price = temp;
+            }
+            productData.Prices.Add(priceData);
+
+            // 最安値情報を作成
+            productData.CheapestData = priceData;
+
+            return productData;
+        }
+
+        /// <summary>
         /// OnNavigatingTo後呼び出し(このページ"から"画面遷移時に実行)
         /// </summary>
         public override void OnNavigatedFrom(NavigationParameters parameters)
@@ -254,13 +278,33 @@ namespace KakakuMemo.ViewModels
         /// </summary>
         public override void OnNavigatingTo(NavigationParameters parameters)
         {
-            // NavigationParametersに「InputKey_Products」をキーとした
-            // パラメーターを持っているかどうかの確認
+            // NavigationParametersに同じキーのパラメーターを持っているかどうかの確認
             if (parameters.ContainsKey(InputKey_Products))
             {
                 // プロパティに格納
                 Products = (List<ProductData>)parameters[InputKey_Products];
             }
+        }
+    }
+
+    /// <summary>
+    /// MultiTrigger使用時の文字列の長さ比較用クラス
+    /// </summary>
+    public class MultiTriggerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+            object parameter, CultureInfo culture)
+        {
+            if ((int)value > 0)         // length > 0 ?
+                return true;            // some data has been entered
+            else
+                return false;           // input is empty
+        }
+
+        public object ConvertBack(object value, Type targetType,
+            object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }

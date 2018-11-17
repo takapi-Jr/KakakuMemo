@@ -5,6 +5,7 @@
              xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="KakakuMemo.Views.AddProductPage"
+             xmlns:local="clr-namespace:KakakuMemo.ViewModels"
              Title="{Binding Title}">
     
     <!-- プラットフォーム別のパディング設定 -->
@@ -14,6 +15,10 @@
                     WinPhone="0"
                     iOS="0, 20, 0, 0" />
     </ContentPage.Padding>
+
+    <ContentPage.Resources>
+        <local:MultiTriggerConverter x:Key="dataHasBeenEntered" />
+    </ContentPage.Resources>
     
     <!-- 入力画面 -->
     <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="StartAndExpand" Padding="10">
@@ -33,19 +38,19 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Text="製品名(*必須)" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding ProductNameEntry}" Placeholder="(例：スマホ)" />
+            <Entry x:Name="productNameEntry" Grid.Row="0" Grid.Column="1" Text="{Binding ProductNameEntry}" Placeholder="(例：スマホ)" />
 
             <Label Grid.Row="1" Grid.Column="0" Text="型番(*必須)" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="1" Grid.Column="1" Text="{Binding TypeNumberEntry}" Placeholder="(例：ASUS Zenfone4)" />
+            <Entry x:Name="typeNumberEntry" Grid.Row="1" Grid.Column="1" Text="{Binding TypeNumberEntry}" Placeholder="(例：ASUS Zenfone4)" />
 
-            <Label Grid.Row="2" Grid.Column="0" Text="価格" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="2" Grid.Column="1" Text="{Binding PriceEntry}" Placeholder="(例：40000)" Keyboard="Numeric" />
+            <Label Grid.Row="2" Grid.Column="0" Text="価格(*必須)" VerticalTextAlignment="Center" />
+            <Entry x:Name="priceEntry" Grid.Row="2" Grid.Column="1" Text="{Binding PriceEntry}" Placeholder="(例：40000)" Keyboard="Numeric" />
 
-            <Label Grid.Row="3" Grid.Column="0" Text="日付" VerticalTextAlignment="Center" />
+            <Label Grid.Row="3" Grid.Column="0" Text="日付(*必須)" VerticalTextAlignment="Center" />
             <DatePicker Grid.Row="3" Grid.Column="1" Date="{Binding DateEntry}" Format="yyyy/MM/dd" />
 
-            <Label Grid.Row="4" Grid.Column="0" Text="店舗名" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="4" Grid.Column="1" Text="{Binding StoreNameEntry}" Placeholder="(例：Amazon)" />
+            <Label Grid.Row="4" Grid.Column="0" Text="店舗名(*必須)" VerticalTextAlignment="Center" />
+            <Entry x:Name="storeNameEntry" Grid.Row="4" Grid.Column="1" Text="{Binding StoreNameEntry}" Placeholder="(例：Amazon)" />
 
             <Label Grid.Row="5" Grid.Column="0" Text="その他メモ" VerticalTextAlignment="Center" />
             <Entry Grid.Row="5" Grid.Column="1" Text="{Binding OtherMemoEntry}" Placeholder="(例：ネット最安値etc...)" />
@@ -62,7 +67,19 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Row="0" Grid.Column="0" x:Name="AddProductButton" Text="登録">
+            <Button Grid.Row="0" Grid.Column="0" x:Name="addProductButton" Text="登録" IsEnabled="False">
+                <Button.Triggers>
+                    <MultiTrigger TargetType="Button">
+                        <MultiTrigger.Conditions>
+                            <!-- 空白有無確認 -->
+                            <BindingCondition Binding="{Binding Source={x:Reference productNameEntry}, Path=Text.Length, Converter={StaticResource dataHasBeenEntered}}" Value="true" />
+                            <BindingCondition Binding="{Binding Source={x:Reference typeNumberEntry},Path=Text.Length, Converter={StaticResource dataHasBeenEntered}}" Value="true" />
+                            <BindingCondition Binding="{Binding Source={x:Reference priceEntry},Path=Text.Length, Converter={StaticResource dataHasBeenEntered}}" Value="true" />
+                            <BindingCondition Binding="{Binding Source={x:Reference storeNameEntry},Path=Text.Length, Converter={StaticResource dataHasBeenEntered}}" Value="true" />
+                        </MultiTrigger.Conditions>
+                        <Setter Property="IsEnabled" Value="True" />
+                    </MultiTrigger>
+                </Button.Triggers>
                 <Button.Behaviors>
                     <behaviorsPack:DisplayAlertBehavior
                         EventName="Clicked"

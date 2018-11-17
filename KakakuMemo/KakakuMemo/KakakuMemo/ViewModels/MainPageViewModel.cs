@@ -73,27 +73,11 @@ namespace KakakuMemo.ViewModels
         /// <summary>
         /// AddProductPageへ画面遷移するコマンド
         /// </summary>
-        //public ICommand GotoAddProductPageCommand => new Command<List<ProductData>>(() =>
-        //{
-        //    var navigationParameters = new NavigationParameters()
-        //    {
-        //        //{ "キー", 値 },
-        //        { AddProductPageViewModel.InputKey_Products, Products },
-        //    };
-
-        //    this.NavigationService.NavigateAsync("AddProductPage", navigationParameters);
-        //});
-
         private DelegateCommand _gotoAddProductPageCommand;
         public DelegateCommand GotoAddProductPageCommand
         {
             get
             {
-                //if (this._gotoAddProductPageCommand != null)
-                //{
-                //    return this._gotoAddProductPageCommand;
-                //}
-
                 var navigationParameters = new NavigationParameters()
                 {
                     //{ "キー", 値 },
@@ -145,6 +129,9 @@ namespace KakakuMemo.ViewModels
             // データディレクトリの取得
             DataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal, Environment.SpecialFolderOption.Create);
             var ProductsFilePath = Path.Combine(DataDirPath, ProductsFileName);
+
+
+#if false
 
             // テスト用データ
             ProductData testData1 = new ProductData
@@ -206,81 +193,116 @@ namespace KakakuMemo.ViewModels
             };
             testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
 
+            ProductData testData4 = new ProductData
+            {
+                ProductName = "あいう",
+                TypeNumber = "かきく",
+                Prices = new List<PriceData>()
+                {
+                    new PriceData() { Price = 789, Date = DateTime.Now, StoreName = "aaa", OtherMemo = "hogehoge" },
+                    new PriceData() { Price = 456, Date = new DateTime(2018, 4, 1), StoreName = "bbb", OtherMemo = "fugafuga" },
+                    new PriceData() { Price = 123, Date = new DateTime(2018, 12, 31), StoreName = "ccc", OtherMemo = "fugofugo" },
+                },
+            };
+            testData4.CheapestData = testData4.Prices.MinBy(x => x.Price).First();
+
             List<ProductData> testProducts = new List<ProductData>();
             testProducts.Add(testData1);
             testProducts.Add(testData2);
             testProducts.Add(testData3);
+            testProducts.Add(testData4);
 
             Products = testProducts;
 
+#endif
 
 
+            // 製品リストの取得
+            if (!File.Exists(ProductsFilePath))
+            {
+                // ファイルが存在しなければ作成
+                using (var writer = new StreamWriter(ProductsFilePath, true, Encoding.UTF8))
+                {
+                    // テスト用データ
+                    ProductData testData1 = new ProductData
+                    {
+                        ProductName = "デジタルカメラ",
+                        TypeNumber = "Nikon B700",
+                        Prices = new List<PriceData>()
+                        {
+                            new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "購入済み" },
+                            new PriceData() { Price = 50000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "hogehoge" },
+                            new PriceData() { Price = 60000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                        },
+                    };
+                    testData1.CheapestData = testData1.Prices.MinBy(x => x.Price).First();
 
+                    ProductData testData2 = new ProductData
+                    {
+                        ProductName = "スマホ",
+                        TypeNumber = "ASUS Zenfone4 ",
+                        Prices = new List<PriceData>()
+                        {
+                            new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
+                            new PriceData() { Price = 30000, Date = new DateTime(2018, 4, 1), StoreName = "ネット(IIJmio)", OtherMemo = "Amazonギフト券(5000円分)付き" },
+                            new PriceData() { Price = 35000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
+                        },
+                    };
+                    testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();
 
+                    ProductData testData3 = new ProductData
+                    {
+                        ProductName = "ノートパソコン",
+                        TypeNumber = "Lenovo X1 Carbon",
+                        Prices = new List<PriceData>()
+                        {
+                            new PriceData() { Price = 200000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
+                            new PriceData() { Price = 150000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "fugafuga" },
+                            new PriceData() { Price = 100000, Date = new DateTime(2018, 12, 31), StoreName = "ネット(Lenovoサイト)", OtherMemo = "(長文テスト)50%OFFクーポン使用。クーポンの利用は来週金曜日23時59分まで。" },
+                        },
+                    };
+                    testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
 
-            //// 製品リストの取得
-            //if (!File.Exists(ProductsFilePath))
-            //{
-            //    // ファイルが存在しなければ作成
-            //    using (var writer = new StreamWriter(ProductsFilePath, true, Encoding.UTF8))
-            //    {
-            //        // テスト用データ
-            //        ProductData testData1 = new ProductData
-            //        {
-            //            ProductName = "デジタルカメラ",
-            //            TypeNumber = "Nikon B700",
-            //            Prices = new List<PriceData>()
-            //            {
-            //                new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "購入済み" },
-            //                new PriceData() { Price = 50000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "hogehoge" },
-            //                new PriceData() { Price = 60000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-            //            },
-            //        };
-            //        testData1.CheapestData = testData1.Prices.MinBy(x => x.Price).First();
+                    ProductData testData4 = new ProductData
+                    {
+                        ProductName = "あいう",
+                        TypeNumber = "かきく",
+                        Prices = new List<PriceData>()
+                        {
+                            new PriceData() { Price = 789, Date = DateTime.Now, StoreName = "aaa", OtherMemo = "hogehoge" },
+                            new PriceData() { Price = 456, Date = new DateTime(2018, 4, 1), StoreName = "bbb", OtherMemo = "fugafuga" },
+                            new PriceData() { Price = 123, Date = new DateTime(2018, 12, 31), StoreName = "ccc", OtherMemo = "fugofugo" },
+                        },
+                    };
+                    testData4.CheapestData = testData4.Prices.MinBy(x => x.Price).First();
 
-            //        ProductData testData2 = new ProductData
-            //        {
-            //            ProductName = "スマホ",
-            //            TypeNumber = "ASUS Zenfone4 ",
-            //            Prices = new List<PriceData>()
-            //            {
-            //                new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-            //                new PriceData() { Price = 30000, Date = new DateTime(2018, 4, 1), StoreName = "ネット(IIJmio)", OtherMemo = "Amazonギフト券(5000円分)付き" },
-            //                new PriceData() { Price = 35000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-            //            },
-            //        };
-            //        testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();
+                    List<ProductData> testProducts = new List<ProductData>();
+                    testProducts.Add(testData1);
+                    testProducts.Add(testData2);
+                    testProducts.Add(testData3);
+                    testProducts.Add(testData4);
 
-            //        ProductData testData3 = new ProductData
-            //        {
-            //            ProductName = "ノートパソコン",
-            //            TypeNumber = "Lenovo X1 Carbon",
-            //            Prices = new List<PriceData>()
-            //            {
-            //                new PriceData() { Price = 200000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-            //                new PriceData() { Price = 150000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "fugafuga" },
-            //                new PriceData() { Price = 100000, Date = new DateTime(2018, 12, 31), StoreName = "ネット(Lenovoサイト)", OtherMemo = "(長文テスト)50%OFFクーポン使用。クーポンの利用は来週金曜日23時59分まで。" },
-            //            },
-            //        };
-            //        testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
+                    // テスト用データ書き込み
+                    var json = JsonConvert.SerializeObject(testProducts);
+                    writer.WriteLine($"{json}");
+                }
+            }
 
-            //        List<ProductData> testProducts = new List<ProductData>();
-            //        testProducts.Add(testData1);
-            //        testProducts.Add(testData2);
-            //        testProducts.Add(testData3);
+            // ファイル読み込み
+            using (var reader = new StreamReader(ProductsFilePath, Encoding.UTF8))
+            {
+                var json = reader.ReadToEnd();
+                Products = JsonConvert.DeserializeObject<List<ProductData>>(json);
+            }
+        }
 
-            //        // テスト用データ書き込み
-            //        var json = JsonConvert.SerializeObject(testProducts);
-            //        writer.WriteLine($"{json}");
-            //    }
-            //}
-
-            //// ファイル読み込み
-            //using (var reader = new StreamReader(ProductsFilePath, Encoding.UTF8))
-            //{
-            //    var json = reader.ReadToEnd();
-            //    Products = JsonConvert.DeserializeObject<List<ProductData>>(json);
-            //}
+        /// <summary>
+        /// 製品情報の追加(プロパティ変更通知用)
+        /// </summary>
+        public void AddProduct(ProductData productData)
+        {
+            Products.Add(productData);
+            Products = Products.ToList();
         }
 
         /// <summary>
@@ -304,14 +326,12 @@ namespace KakakuMemo.ViewModels
         /// </summary>
         public override void OnNavigatingTo(NavigationParameters parameters)
         {
-            // NavigationParametersに「InputKey_AddProduct」をキーとした
-            // パラメーターを持っているかどうかの確認
+            // NavigationParametersに同じキーのパラメーターを持っているかどうかの確認
             if (parameters.ContainsKey(InputKey_AddProduct))
             {
                 // プロパティに格納
                 var tempProduct = (ProductData)parameters[InputKey_AddProduct];
-                Products.Add(tempProduct);
-                Products = Products.ToList();
+                AddProduct(tempProduct);
             }
         }
     }
