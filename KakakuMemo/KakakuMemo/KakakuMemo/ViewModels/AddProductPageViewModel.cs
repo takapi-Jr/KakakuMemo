@@ -245,7 +245,7 @@ namespace KakakuMemo.ViewModels
 
             // 価格が取得できる形であれば設定
             var temp = 0;
-            if (int.TryParse(PriceEntry, out temp))
+            if (int.TryParse(PriceEntry, out temp) && temp > 0)
             {
                 priceData.Price = temp;
             }

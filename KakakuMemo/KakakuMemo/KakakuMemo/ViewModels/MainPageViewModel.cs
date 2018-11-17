@@ -306,6 +306,22 @@ namespace KakakuMemo.ViewModels
         }
 
         /// <summary>
+        /// 製品リストファイルを上書き保存
+        /// </summary>
+        public void UpdateProductsFile()
+        {
+            // 現在の製品リストをファイルに更新
+            var ProductsFilePath = Path.Combine(DataDirPath, ProductsFileName);
+            using (var writer = new StreamWriter(ProductsFilePath, false, Encoding.UTF8))
+            {
+                var json = JsonConvert.SerializeObject(Products);
+                writer.WriteLine($"{json}");
+            }
+
+            return;
+        }
+
+        /// <summary>
         /// OnNavigatingTo後呼び出し(このページ"から"画面遷移時に実行)
         /// </summary>
         public override void OnNavigatedFrom(NavigationParameters parameters)
@@ -332,6 +348,9 @@ namespace KakakuMemo.ViewModels
                 // プロパティに格納
                 var tempProduct = (ProductData)parameters[InputKey_AddProduct];
                 AddProduct(tempProduct);
+
+                // 製品リストファイルを更新
+                UpdateProductsFile();
             }
         }
     }
