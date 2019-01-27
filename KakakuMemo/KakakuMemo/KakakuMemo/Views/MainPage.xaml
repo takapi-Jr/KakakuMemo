@@ -29,6 +29,11 @@
         <ListView.Behaviors>
             <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}" />
         </ListView.Behaviors>
+
+        <!-- ロングタップ時、削除確認 -->
+        <!--<ListView.GestureRecognizers>
+            
+        </ListView.GestureRecognizers>-->
         
         <!-- ItemTemplate -->
         <ListView.ItemTemplate>
