@@ -5,7 +5,7 @@
              xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="KakakuMemo.Views.AddProductPage"
-             xmlns:local="clr-namespace:KakakuMemo.ViewModels"
+             xmlns:converter="clr-namespace:KakakuMemo.Converters"
              Title="{Binding Title}">
     
     <!-- プラットフォーム別のパディング設定 -->
@@ -17,7 +17,7 @@
     </ContentPage.Padding>
 
     <ContentPage.Resources>
-        <local:MultiTriggerConverter x:Key="dataHasBeenEntered" />
+        <converter:MultiTriggerConverter x:Key="dataHasBeenEntered" />
     </ContentPage.Resources>
     
     <!-- 入力画面 -->
