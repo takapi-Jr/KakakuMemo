@@ -22,6 +22,10 @@ namespace KakakuMemo.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+
+            // AiForms.Effectsの初期化
+            AiForms.Effects.iOS.Effects.Init();  //need to write here
+
             LoadApplication(new App(new iOSInitializer()));
 
             return base.FinishedLaunching(app, options);
@@ -30,9 +34,9 @@ namespace KakakuMemo.iOS
 
     public class iOSInitializer : IPlatformInitializer
     {
-        public void RegisterTypes(IContainerRegistry container)
+        public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            // Register any platform specific implementations
         }
     }
 }

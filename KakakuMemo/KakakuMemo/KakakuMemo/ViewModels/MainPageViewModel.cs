@@ -1,110 +1,65 @@
-﻿using Prism.Commands;
+﻿using KakakuMemo.Models;
+using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Reactive.Bindings;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
-using Newtonsoft.Json;
-using KakakuMemo.Models;
 
 namespace KakakuMemo.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
-        #region 定数
-
-        // 製品リストを格納するJSONファイル名
-        public static readonly string ProductsFileName = "Products.json";
-        // パラメータ取得用キー
-        public static readonly string InputKey_AddProduct = "AddProduct";
+        #region ■画面遷移用キー
 
         #endregion
 
 
 
-        #region プロパティ
+        #region ■プロパティ
 
-        // 自作プロパティの命名規則メモ
-        // privateのプロパティ名   →   _hogeHoge
-        // publicのプロパティ名    →   HogeHoge
-
-        // 製品リスト
-        private IList<ProductData> _products;
-        public IList<ProductData> Products
-        {
-            get { return _products; }
-            set { SetProperty(ref _products, value); }
-        }
-
-        // データディレクトリパス
-        public string DataDirPath { get; set; }
+        /// <summary>
+        /// 製品リスト
+        /// </summary>
+        public ReactiveProperty<ObservableCollection<ProductData>> ProductList { get; } = new ReactiveProperty<ObservableCollection<ProductData>>();
 
         #endregion
 
 
 
-        #region コマンド
+        #region ■コマンド
 
         /// <summary>
-        /// SettingPageへ画面遷移するコマンド
+        /// 設定画面に移動コマンド
         /// </summary>
-        private DelegateCommand _gotoSettingPageCommand;
-        public DelegateCommand GotoSettingPageCommand
-        {
-            get
-            {
-                if (this._gotoSettingPageCommand != null)
-                {
-                    return this._gotoSettingPageCommand;
-                }
-
-                this._gotoSettingPageCommand = new DelegateCommand(() =>
-                {
-                    this.NavigationService.NavigateAsync("SettingPage");
-                });
-                return this._gotoSettingPageCommand;
-            }
-        }
+        public AsyncReactiveCommand GotoSettingPageCommand { get; } = new AsyncReactiveCommand();
 
         /// <summary>
-        /// AddProductPageへ画面遷移するコマンド
+        /// 製品情報追加画面に移動コマンド
         /// </summary>
-        private DelegateCommand _gotoAddProductPageCommand;
-        public DelegateCommand GotoAddProductPageCommand
-        {
-            get
-            {
-                var navigationParameters = new NavigationParameters()
-                {
-                    //{ "キー", 値 },
-                    { AddProductPageViewModel.InputKey_Products, Products },
-                };
-
-                this._gotoAddProductPageCommand = new DelegateCommand(() =>
-                {
-                    this.NavigationService.NavigateAsync("AddProductPage", navigationParameters);
-                });
-                return this._gotoAddProductPageCommand;
-            }
-        }
+        public AsyncReactiveCommand GotoAddProductPageCommand { get; } = new AsyncReactiveCommand();
 
         /// <summary>
-        /// 製品リスト選択して、DetailPageへ画面遷移するコマンド
+        /// 製品情報詳細画面に移動コマンド
         /// </summary>
-        public ICommand SelectedProductItemCommand => new Command<ProductData>(product => 
-        {
-            var navigationParameters = new NavigationParameters()
-            {
-                //{ "キー", 値 },
-                { DetailPageViewModel.InputKey_Product, product },
-            };
+        public AsyncReactiveCommand<ProductData> GotoDetailPageCommand { get; } = new AsyncReactiveCommand<ProductData>();
 
-            this.NavigationService.NavigateAsync("DetailPage", navigationParameters);
-        });
+        /// <summary>
+        /// 製品情報を(Android)長押し/(iOS)スワイプで編集コマンド
+        /// </summary>
+        public AsyncReactiveCommand<ProductData> EditProductDataCommad { get; } = new AsyncReactiveCommand<ProductData>();
+
+        /// <summary>
+        /// 製品情報を(Android)長押し/(iOS)スワイプで削除コマンド
+        /// </summary>
+        public AsyncReactiveCommand<ProductData> DeleteProductDataCommad { get; } = new AsyncReactiveCommand<ProductData>();
 
         #endregion
 
@@ -113,245 +68,103 @@ namespace KakakuMemo.ViewModels
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public MainPageViewModel(INavigationService navigationService) 
-            : base (navigationService)
+        /// <param name="navigationService"></param>
+        public MainPageViewModel(INavigationService navigationService)
+            : base(navigationService)
         {
-            Title = "価格メモ Main Page";
+            Title = "製品リスト";
 
-            InitProcess();
-        }
+            // 製品リスト読み込み
+            this.ProductList.Value = Common.ProductList;
 
-        /// <summary>
-        /// 初期化処理
-        /// </summary>
-        private void InitProcess()
-        {
-            // データディレクトリの取得
-            DataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal, Environment.SpecialFolderOption.Create);
-            var ProductsFilePath = Path.Combine(DataDirPath, ProductsFileName);
-
-
-#if false
-
-            // テスト用データ
-            ProductData testData1 = new ProductData
+            ////////////////////////////////////////////////////////////////////////////////
+            // 設定画面に移動コマンド
+            GotoSettingPageCommand.Subscribe(async () =>
             {
-                ProductName = "デジタルカメラ",
-                TypeNumber = "Nikon B700",
-                Prices = new List<PriceData>()
+                try
                 {
-                    new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "購入済み" },
-                    new PriceData() { Price = 50000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "hogehoge" },
-                    new PriceData() { Price = 60000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                },
-            };
-            testData1.CheapestData = testData1.Prices.MinBy(x => x.Price).First();
-
-            ProductData testData2 = new ProductData
-            {
-                ProductName = "スマホ",
-                TypeNumber = "ASUS Zenfone4",
-                Prices = new List<PriceData>()
-                {
-                    new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-                    new PriceData() { Price = 30000, Date = new DateTime(2018, 4, 1), StoreName = "ネット(IIJmio)", OtherMemo = "Amazonギフト券(5000円分)付き" },
-                    new PriceData() { Price = 35000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35100, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35200, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35300, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35400, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35500, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35600, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35700, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35800, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 35900, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36100, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36200, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36300, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36400, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36500, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36600, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36700, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36800, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 36900, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 37000, Date = new DateTime(2018, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                },
-            };
-            testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();
-
-            ProductData testData3 = new ProductData
-            {
-                ProductName = "ノートパソコン",
-                TypeNumber = "Lenovo X1 Carbon",
-                Prices = new List<PriceData>()
-                {
-                    new PriceData() { Price = 200000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-                    new PriceData() { Price = 150000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 100000, Date = new DateTime(2018, 12, 31), StoreName = "ネット(Lenovoサイト)", OtherMemo = "(長文テスト)50%OFFクーポン使用。クーポンの利用は来週金曜日23時59分まで。" },
-                },
-            };
-            testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
-
-            ProductData testData4 = new ProductData
-            {
-                ProductName = "あいう",
-                TypeNumber = "かきく",
-                Prices = new List<PriceData>()
-                {
-                    new PriceData() { Price = 789, Date = DateTime.Now, StoreName = "aaa", OtherMemo = "hogehoge" },
-                    new PriceData() { Price = 456, Date = new DateTime(2018, 4, 1), StoreName = "bbb", OtherMemo = "fugafuga" },
-                    new PriceData() { Price = 123, Date = new DateTime(2018, 12, 31), StoreName = "ccc", OtherMemo = "fugofugo" },
-                },
-            };
-            testData4.CheapestData = testData4.Prices.MinBy(x => x.Price).First();
-
-            List<ProductData> testProducts = new List<ProductData>();
-            testProducts.Add(testData1);
-            testProducts.Add(testData2);
-            testProducts.Add(testData3);
-            testProducts.Add(testData4);
-
-            Products = testProducts;
-
-#endif
-
-
-            // 製品リストの取得
-            if (!File.Exists(ProductsFilePath))
-            {
-                // ファイルが存在しなければ作成
-                using (var writer = new StreamWriter(ProductsFilePath, true, Encoding.UTF8))
-                {
-                    // テスト用データ
-                    ProductData testData1 = new ProductData
-                    {
-                        ProductName = "デジタルカメラ",
-                        TypeNumber = "Nikon B700",
-                        Prices = new List<PriceData>()
-                        {
-                            new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "購入済み" },
-                            new PriceData() { Price = 50000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "hogehoge" },
-                            new PriceData() { Price = 60000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                        },
-                    };
-                    testData1.CheapestData = testData1.Prices.MinBy(x => x.Price).First();
-
-                    ProductData testData2 = new ProductData
-                    {
-                        ProductName = "スマホ",
-                        TypeNumber = "ASUS Zenfone4 ",
-                        Prices = new List<PriceData>()
-                        {
-                            new PriceData() { Price = 40000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-                            new PriceData() { Price = 30000, Date = new DateTime(2018, 4, 1), StoreName = "ネット(IIJmio)", OtherMemo = "Amazonギフト券(5000円分)付き" },
-                            new PriceData() { Price = 35000, Date = new DateTime(2010, 12, 31), StoreName = "ビックカメラ", OtherMemo = "fugafuga" },
-                        },
-                    };
-                    testData2.CheapestData = testData2.Prices.MinBy(x => x.Price).First();
-
-                    ProductData testData3 = new ProductData
-                    {
-                        ProductName = "ノートパソコン",
-                        TypeNumber = "Lenovo X1 Carbon",
-                        Prices = new List<PriceData>()
-                        {
-                            new PriceData() { Price = 200000, Date = DateTime.Now, StoreName = "ヨドバシ博多", OtherMemo = "hogehoge" },
-                            new PriceData() { Price = 150000, Date = new DateTime(2018, 4, 1), StoreName = "ヤマダ電機", OtherMemo = "fugafuga" },
-                            new PriceData() { Price = 100000, Date = new DateTime(2018, 12, 31), StoreName = "ネット(Lenovoサイト)", OtherMemo = "(長文テスト)50%OFFクーポン使用。クーポンの利用は来週金曜日23時59分まで。" },
-                        },
-                    };
-                    testData3.CheapestData = testData3.Prices.MinBy(x => x.Price).First();
-
-                    ProductData testData4 = new ProductData
-                    {
-                        ProductName = "あいう",
-                        TypeNumber = "かきく",
-                        Prices = new List<PriceData>()
-                        {
-                            new PriceData() { Price = 789, Date = DateTime.Now, StoreName = "aaa", OtherMemo = "hogehoge" },
-                            new PriceData() { Price = 456, Date = new DateTime(2018, 4, 1), StoreName = "bbb", OtherMemo = "fugafuga" },
-                            new PriceData() { Price = 123, Date = new DateTime(2018, 12, 31), StoreName = "ccc", OtherMemo = "fugofugo" },
-                        },
-                    };
-                    testData4.CheapestData = testData4.Prices.MinBy(x => x.Price).First();
-
-                    List<ProductData> testProducts = new List<ProductData>();
-                    testProducts.Add(testData1);
-                    testProducts.Add(testData2);
-                    testProducts.Add(testData3);
-                    testProducts.Add(testData4);
-
-                    // テスト用データ書き込み
-                    var json = JsonConvert.SerializeObject(testProducts);
-                    writer.WriteLine($"{json}");
+                    await this.NavigationService.NavigateAsync("SettingPage");
                 }
-            }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
 
-            // ファイル読み込み
-            using (var reader = new StreamReader(ProductsFilePath, Encoding.UTF8))
+            ////////////////////////////////////////////////////////////////////////////////
+            // 製品情報追加画面に移動コマンド
+            GotoAddProductPageCommand.Subscribe(async () =>
             {
-                var json = reader.ReadToEnd();
-                Products = JsonConvert.DeserializeObject<List<ProductData>>(json);
-            }
-        }
+                try
+                {
+                    await this.NavigationService.NavigateAsync("AddProductPage");
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
 
-        /// <summary>
-        /// 製品情報の追加(プロパティ変更通知用)
-        /// </summary>
-        public void AddProduct(ProductData productData)
-        {
-            Products.Add(productData);
-            Products = Products.ToList();
-        }
-
-        /// <summary>
-        /// 製品リストファイルを上書き保存
-        /// </summary>
-        public void UpdateProductsFile()
-        {
-            // 現在の製品リストをファイルに更新
-            var ProductsFilePath = Path.Combine(DataDirPath, ProductsFileName);
-            using (var writer = new StreamWriter(ProductsFilePath, false, Encoding.UTF8))
+            ////////////////////////////////////////////////////////////////////////////////
+            // 製品情報詳細画面に移動コマンド
+            GotoDetailPageCommand.Subscribe(async selectedProduct =>
             {
-                var json = JsonConvert.SerializeObject(Products);
-                writer.WriteLine($"{json}");
-            }
+                try
+                {
+                    var navigationParameters = new NavigationParameters()
+                    {
+                        //{ "キー", 値 },
+                        { DetailPageViewModel.INPUT_KEY_SELECTED_PRODUCT, selectedProduct },
+                    };
+                    await this.NavigationService.NavigateAsync("DetailPage", navigationParameters);
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
 
-            return;
-        }
-
-        /// <summary>
-        /// OnNavigatingTo後呼び出し(このページ"から"画面遷移時に実行)
-        /// </summary>
-        public override void OnNavigatedFrom(NavigationParameters parameters)
-        {
-
-        }
-
-        /// <summary>
-        /// 画面表示後呼び出し(このページ"に"画面遷移後に実行)
-        /// </summary>
-        public override void OnNavigatedTo(NavigationParameters parameters)
-        {
-
-        }
-
-        /// <summary>
-        /// 画面表示前呼び出し(このページ"に"画面遷移時に実行)
-        /// </summary>
-        public override void OnNavigatingTo(NavigationParameters parameters)
-        {
-            // NavigationParametersに同じキーのパラメーターを持っているかどうかの確認
-            if (parameters.ContainsKey(InputKey_AddProduct))
+            ////////////////////////////////////////////////////////////////////////////////
+            // 製品情報を(Android)長押し/(iOS)スワイプで編集コマンド
+            EditProductDataCommad.Subscribe(async selectedProduct =>
             {
-                // プロパティに格納
-                var tempProduct = (ProductData)parameters[InputKey_AddProduct];
-                AddProduct(tempProduct);
+                try
+                {
+                    var navigationParameters = new NavigationParameters()
+                    {
+                        //{ "キー", 値 },
+                        { AddProductPageViewModel.INPUT_KEY_EDIT_PRODUCT, selectedProduct },
+                    };
+                    await this.NavigationService.NavigateAsync("AddProductPage", navigationParameters);
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
 
-                // 製品リストファイルを更新
-                UpdateProductsFile();
-            }
+            ////////////////////////////////////////////////////////////////////////////////
+            // 製品情報を(Android)長押し/(iOS)スワイプで削除コマンド
+            DeleteProductDataCommad.Subscribe(async selectedProduct =>
+            {
+                try
+                {
+                    // アラート表示
+                    var retFlag = await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"下記の製品情報を削除しますか？\n\n{selectedProduct.ProductName}\n{selectedProduct.TypeNumber}", "OK", "キャンセル");
+                    if (retFlag)
+                    {
+                        ProductList.Value.Remove(selectedProduct);
+                        Common.ProductList.Remove(selectedProduct);
+
+                        // 製品リストファイルを上書き保存
+                        Common.UpdateProductsFile();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
         }
     }
 }

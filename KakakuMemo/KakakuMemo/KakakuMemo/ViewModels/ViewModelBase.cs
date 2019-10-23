@@ -7,7 +7,7 @@ using System.Text;
 
 namespace KakakuMemo.ViewModels
 {
-    public class ViewModelBase : BindableBase, INavigationAware, IDestructible
+    public class ViewModelBase : BindableBase, IInitialize, INavigationAware, IDestructible
     {
         protected INavigationService NavigationService { get; private set; }
 
@@ -23,24 +23,24 @@ namespace KakakuMemo.ViewModels
             NavigationService = navigationService;
         }
 
-        public virtual void OnNavigatedFrom(NavigationParameters parameters)
+        public virtual void Initialize(INavigationParameters parameters)
         {
-            
+
         }
 
-        public virtual void OnNavigatedTo(NavigationParameters parameters)
+        public virtual void OnNavigatedFrom(INavigationParameters parameters)
         {
-            
+
         }
 
-        public virtual void OnNavigatingTo(NavigationParameters parameters)
+        public virtual void OnNavigatedTo(INavigationParameters parameters)
         {
-            
+
         }
 
         public virtual void Destroy()
         {
-            
+
         }
     }
 }

@@ -1,52 +1,61 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Reactive.Bindings;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 
 namespace KakakuMemo.Models
 {
-    public static class Common
+    public class Common
     {
-        // 参考ページ：LINQ で最小値・最大値を柔軟に求める
-        // https://qiita.com/Zuishin/items/95e171eccc128bdd6429
+        #region ■文字列関連
+
+        // 製品リストを格納するJSONファイル名
+        public static readonly string ProductsFileName = "Products.json";
+
+        #endregion
+
+
+
+        #region ■プロパティ
 
         /// <summary>
-        /// リスト内の特定キーが最小である場合を取得
+        /// データディレクトリパス
         /// </summary>
-        public static IEnumerable<T> MinBy<T, U>(this IEnumerable<T> source, Func<T, U> selector)
-        {
-            return SelectBy(source, selector, (a, b) => Comparer<U>.Default.Compare(a, b) < 0);
-        }
+        public static string DataDirPath { get; set; }
 
         /// <summary>
-        /// リスト内の特定キーが最大である場合を取得
+        /// 製品リストファイルパス
         /// </summary>
-        public static IEnumerable<T> MaxBy<T, U>(this IEnumerable<T> source, Func<T, U> selector)
-        {
-            return SelectBy(source, selector, (a, b) => Comparer<U>.Default.Compare(a, b) > 0);
-        }
+        public static string ProductsFilePath { get; set; }
 
         /// <summary>
-        /// 比較関数を使用して該当するものを取得
+        /// 製品リストファイルに書き込む用
         /// </summary>
-        private static IEnumerable<T> SelectBy<T, U>(IEnumerable<T> source, Func<T, U> selector, Func<U, U, bool> comparer)
+        public static ObservableCollection<ProductData> ProductList { get; set; }
+
+        #endregion
+
+
+
+        #region ■ファイル操作関連
+
+        /// <summary>
+        /// 製品リストファイルを上書き保存
+        /// </summary>
+        public static void UpdateProductsFile()
         {
-            var list = new LinkedList<T>();
-            U prevKey = default(U);
-            foreach (var item in source)
+            using (var writer = new StreamWriter(Common.ProductsFilePath, false, Encoding.UTF8))
             {
-                var key = selector(item);
-                if (list.Count == 0 || comparer(key, prevKey))
-                {
-                    list.Clear();
-                    list.AddLast(item);
-                    prevKey = key;
-                }
-                else if (Comparer<U>.Default.Compare(key, prevKey) == 0)
-                {
-                    list.AddLast(item);
-                }
+                var json = JsonConvert.SerializeObject(Common.ProductList, Formatting.Indented);
+                writer.WriteLine($"{json}");
             }
-            return list;
+
+            return;
         }
+
+        #endregion
     }
 }

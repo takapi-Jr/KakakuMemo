@@ -1,22 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="KakakuMemo.Views.LicensePage"
              Title="{Binding Title}">
-    
-    <!-- プラットフォーム別のパディング設定 -->
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness"
-                    Android="0"
-                    WinPhone="0"
-                    iOS="0, 20, 0, 0" />
-    </ContentPage.Padding>
 
-    <!-- オープンソースライセンス画面 -->
-    <ScrollView>
-        <Label Text="{Binding License}" />
-    </ScrollView>
+    <!-- オープンソースライセンス一覧 -->
+    <ListView ItemsSource="{Binding LibNameList}" HasUnevenRows="True">
+        <!-- Behavior(Command) -->
+        <ListView.Behaviors>
+            <behaviorsPack:SelectedItemBehavior Command="{Binding GotoLicenseDetailPageCommand}" />
+        </ListView.Behaviors>
+
+        <!-- ItemTemplate -->
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <StackLayout Orientation="Vertical" Padding="15">
+                        <Label Text="{Binding .}" FontSize="Medium" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 
 </ContentPage>

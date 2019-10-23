@@ -2,43 +2,48 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             xmlns:ef="clr-namespace:AiForms.Effects;assembly=AiForms.Effects"
              x:Class="KakakuMemo.Views.MainPage"
+             x:Name="mainPage"
              Title="{Binding Title}">
-
-    <!-- プラットフォーム別のパディング設定 -->
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness"
-                    Android="0"
-                    WinPhone="0"
-                    iOS="0, 20, 0, 0" />
-    </ContentPage.Padding>
 
     <!-- ツールバー -->
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="Plus_001.png"
-                     Text="追加"
-                     Command="{Binding GotoAddProductPageCommand}" />
-        <ToolbarItem Icon="Setting_001.png"
-                     Text="設定"
+        <ToolbarItem Icon="Info.png"
+                     Text="設定/製品情報"
                      Command="{Binding GotoSettingPageCommand}" />
     </ContentPage.ToolbarItems>
 
+    <ef:Floating.Content>
+        <ef:FloatingLayout>
+            <!-- This element is arranged at above 25dp from the vertical end and left 25dp from the horizontal end. -->
+            <ef:FloatingView VerticalLayoutAlignment="End" HorizontalLayoutAlignment="End" OffsetX="-25" OffsetY="-25" >
+                <!-- Code behind handling / ViewModel binding OK -->
+                <Button Command="{Binding GotoAddProductPageCommand}" BackgroundColor="#2196F3" 
+                        BorderRadius="28" WidthRequest="56" HeightRequest="56" 
+                        Text="＋" FontSize="24"
+                        TextColor="White" Padding="0" />
+            </ef:FloatingView>
+        </ef:FloatingLayout>
+    </ef:Floating.Content>
+
     <!-- メイン画面 -->
-    <ListView x:Name="listView" ItemsSource="{Binding Products}" HasUnevenRows="True">
+    <ListView x:Name="listView" ItemsSource="{Binding ProductList.Value}" HasUnevenRows="True">
         <!-- Behavior(Command) -->
         <ListView.Behaviors>
-            <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}" />
+            <behaviorsPack:SelectedItemBehavior Command="{Binding GotoDetailPageCommand}" />
         </ListView.Behaviors>
 
-        <!-- ロングタップ時、削除確認 -->
-        <!--<ListView.GestureRecognizers>
-            
-        </ListView.GestureRecognizers>-->
-        
         <!-- ItemTemplate -->
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
+                    <!-- コンテキストアクション(Androidは長押し、iOSはスワイプ時処理) -->
+                    <ViewCell.ContextActions>
+                        <MenuItem Text="編集" Command="{Binding Path=BindingContext.EditProductDataCommad, Source={x:Reference mainPage}}" CommandParameter="{Binding .}" />
+                        <MenuItem Text="削除" Command="{Binding Path=BindingContext.DeleteProductDataCommad, Source={x:Reference mainPage}}" CommandParameter="{Binding .}" IsDestructive="True" />
+                    </ViewCell.ContextActions>
+
                     <StackLayout Orientation="Horizontal" Padding="5">
                         <Image Source="Icon.png" VerticalOptions="Start" />
                         <StackLayout Orientation="Vertical" Padding="5">
@@ -57,10 +62,5 @@
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
-
-
-    <!--<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-        <Label Text="Welcome to Xamarin Forms and Prism!" />
-    </StackLayout>-->
 
 </ContentPage>

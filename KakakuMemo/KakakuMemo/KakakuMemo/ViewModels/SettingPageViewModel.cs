@@ -1,47 +1,70 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace KakakuMemo.ViewModels
 {
-	public class SettingPageViewModel : ViewModelBase
+    public class SettingPageViewModel : ViewModelBase
     {
-        #region コマンド
+        #region ■プロパティ
 
         /// <summary>
-        /// LicensePageへ画面遷移するコマンド
+        /// アプリ名
         /// </summary>
-        private DelegateCommand _gotoLicensePageCommand;
-        public DelegateCommand GotoLicensePageCommand
-        {
-            get
-            {
-                if (this._gotoLicensePageCommand != null)
-                {
-                    return this._gotoLicensePageCommand;
-                }
+        public ReactiveProperty<string> AppName { get; } = new ReactiveProperty<string>();
 
-                this._gotoLicensePageCommand = new DelegateCommand(() =>
-                {
-                    this.NavigationService.NavigateAsync("LicensePage");
-                });
-                return this._gotoLicensePageCommand;
-            }
-        }
+        /// <summary>
+        /// バージョン番号
+        /// </summary>
+        public ReactiveProperty<string> Version { get; } = new ReactiveProperty<string>();
 
         #endregion
+
+
+
+        #region ■コマンド
+
+        /// <summary>
+        /// ライセンス情報画面へ移動コマンド
+        /// </summary>
+        public AsyncReactiveCommand GotoLicensePageCommand { get; } = new AsyncReactiveCommand();
+
+        #endregion
+
 
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
+        /// <param name="navigationService"></param>
         public SettingPageViewModel(INavigationService navigationService)
             : base(navigationService)
         {
-            Title = "価格メモ Setting Page";
+            Title = "設定/製品情報";
+
+            // バージョン情報設定
+            AppName.Value = AppInfo.Name;
+            Version.Value = AppInfo.VersionString;
+
+            ////////////////////////////////////////////////////////////////////////////////
+            // ライセンス情報画面に移動コマンド
+            GotoLicensePageCommand.Subscribe(async () =>
+            {
+                try
+                {
+                    await this.NavigationService.NavigateAsync("LicensePage");
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppInfo.Name, $"例外が発生しました。\n{ex}", "OK");
+                }
+            });
         }
     }
 }

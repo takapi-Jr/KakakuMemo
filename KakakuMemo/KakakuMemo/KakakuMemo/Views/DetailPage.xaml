@@ -1,41 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:ef="clr-namespace:AiForms.Effects;assembly=AiForms.Effects"
+             xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="KakakuMemo.Views.DetailPage"
+             x:Name="detailPage"
              Title="{Binding Title}">
 
-    <!-- プラットフォーム別のパディング設定 -->
-    <ContentPage.Padding>
-        <OnPlatform x:TypeArguments="Thickness"
-                    Android="0"
-                    WinPhone="0"
-                    iOS="0, 20, 0, 0" />
-    </ContentPage.Padding>
-
+    <ef:Floating.Content>
+        <ef:FloatingLayout>
+            <!-- This element is arranged at above 25dp from the vertical end and left 25dp from the horizontal end. -->
+            <ef:FloatingView VerticalLayoutAlignment="End" HorizontalLayoutAlignment="End" OffsetX="-25" OffsetY="-25" >
+                <!-- Code behind handling / ViewModel binding OK -->
+                <Button Command="{Binding GotoAddPricePageCommand}" BackgroundColor="#2196F3" 
+                        BorderRadius="28" WidthRequest="56" HeightRequest="56" 
+                        Text="＋" FontSize="24"
+                        TextColor="White" Padding="0" />
+            </ef:FloatingView>
+        </ef:FloatingLayout>
+    </ef:Floating.Content>
+    
     <!-- 詳細画面 -->
     <StackLayout Orientation="Vertical" Padding="5">
         <!-- 製品情報 -->
         <StackLayout Orientation="Horizontal" Padding="5">
             <Image Source="Icon.png" VerticalOptions="Start" />
             <StackLayout Orientation="Vertical" Padding="5">
-                <Label Text="{Binding SelectedProduct.ProductName}" />
-                <Label Text="{Binding SelectedProduct.TypeNumber}" />
+                <Label Text="{Binding SelectedProduct.Value.ProductName}" />
+                <Label Text="{Binding SelectedProduct.Value.TypeNumber}" />
             </StackLayout>
         </StackLayout>
-        
-        <!-- 価格情報 -->
-        <ListView x:Name="listView" ItemsSource="{Binding SelectedProduct.Prices}" HasUnevenRows="True">
-            <!-- Behavior(Command) -->
-            <!--<ListView.Behaviors>
-                <behaviorsPack:SelectedItemBehavior Command="{Binding SelectedProductItemCommand}"/>
-            </ListView.Behaviors>-->
 
+        <!-- 価格情報 -->
+        <ListView x:Name="listView" ItemsSource="{Binding SelectedProduct.Value.PriceList}" HasUnevenRows="True">
             <!-- ItemTemplate -->
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
+                        <!-- コンテキストアクション(Androidは長押し、iOSはスワイプ時処理) -->
+                        <ViewCell.ContextActions>
+                            <MenuItem Text="編集" Command="{Binding Path=BindingContext.EditPriceDataCommad, Source={x:Reference detailPage}}" CommandParameter="{Binding .}" />
+                            <MenuItem Text="削除" Command="{Binding Path=BindingContext.DeletePriceDataCommad, Source={x:Reference detailPage}}" CommandParameter="{Binding .}" IsDestructive="True" />
+                        </ViewCell.ContextActions>
+
                         <StackLayout Orientation="Vertical" Padding="5">
                             <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="5">
                                 <Label Text="{Binding Price, StringFormat='￥{0:#,0}'}" HorizontalTextAlignment="Start" />
@@ -51,13 +59,5 @@
             </ListView.ItemTemplate>
         </ListView>
     </StackLayout>
-    
-    
-    <!--<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-        <Label Text="Welcome to Xamarin Forms and Prism!" />
-
-        --><!-- navigationParameters確認用 --><!--
-        <Label Text="{Binding SelectedProduct.ProductName}" />
-    </StackLayout>-->
 
 </ContentPage>

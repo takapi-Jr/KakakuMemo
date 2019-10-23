@@ -4,7 +4,7 @@
              xmlns:ef="clr-namespace:AiForms.Effects;assembly=AiForms.Effects"
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="KakakuMemo.Views.AddProductPage"
+             x:Class="KakakuMemo.Views.AddPricePage"
              Title="{Binding Title}">
 
     <!-- リソース定義 -->
@@ -34,22 +34,30 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Text="製品名：" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding ProductName.Value}" VerticalOptions="Center" ef:AddText.Text="{Binding ProductNameError.Value}" HeightRequest="45" IsTabStop="False" />
+            <Label Grid.Row="0" Grid.Column="0" Text="価格：" VerticalTextAlignment="Center" />
+            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Price.Value}" Keyboard="Numeric" VerticalOptions="Center" ef:AddText.Text="{Binding PriceError.Value}" HeightRequest="45" IsTabStop="False" />
 
-            <Label Grid.Row="1" Grid.Column="0" Text="型番：" VerticalTextAlignment="Center" />
-            <Entry Grid.Row="1" Grid.Column="1" Text="{Binding TypeNumber.Value}" VerticalOptions="Center" ef:AddText.Text="{Binding TypeNumberError.Value}" HeightRequest="45" IsTabStop="False" />
+            <Label Grid.Row="1" Grid.Column="0" Text="日付：" VerticalTextAlignment="Center" />
+            <DatePicker Grid.Row="1" Grid.Column="1" Date="{Binding Date.Value, Mode=OneWayToSource}" Format="yyyy/MM/dd" VerticalOptions="Center" ef:AddText.Text="{Binding DateError.Value}" HeightRequest="45" IsTabStop="False" />
+
+            <Label Grid.Row="2" Grid.Column="0" Text="店舗名：" VerticalTextAlignment="Center" />
+            <Entry Grid.Row="2" Grid.Column="1" Text="{Binding StoreName.Value}" VerticalOptions="Center" ef:AddText.Text="{Binding StoreNameError.Value}" HeightRequest="45" IsTabStop="False" />
+
+            <Label Grid.Row="3" Grid.Column="0" Text="メモ：" VerticalTextAlignment="Center" />
+            <Entry Grid.Row="3" Grid.Column="1" Text="{Binding OtherMemo.Value}" VerticalOptions="Center" ef:AddText.Text="{Binding OtherMemoError.Value}" HeightRequest="45" IsTabStop="False" />
         </Grid>
 
         <!-- 追加ボタン -->
         <StackLayout Grid.Row="1" HorizontalOptions="End">
-            <Button Text="登録" Command="{Binding AddProductCommand}" HorizontalOptions="End" />
+            <Button Text="登録" Command="{Binding AddPriceCommand}" HorizontalOptions="End" />
         </StackLayout>
     </Grid>
 
